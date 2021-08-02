@@ -1,6 +1,8 @@
 # Wallets service
 
-Wallets service provides API for creating and fetching wallets, making deposits and transfers between wallets, fetching transfers history
+Wallets service provides API for creating and fetching wallets, making deposits and transfers between wallets, fetching transfers history.
+
+Balance is stored in USD cents. Balance in 100 means $1.00. Numeric types also could be used. But in case of USD it seems over engineered.
 
 ### Running
 
