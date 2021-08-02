@@ -1,0 +1,66 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:13.3
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 088fc01375fe2b689db8a872912392c6
+      POSTGRES_DB: test_db
+    ports:
+      - "15432:5432"
+    volumes:
+    - ./.postgres_init/:/docker-entrypoint-initdb.d
+    - ./.postgres_data/:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U root -d test_db" ]
+      timeout: 15s
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:5.0.9
+    command: [
+        "--dir",
+        "/etc/redis/database",
+        "--save",
+        "900", "1",
+        "--save",
+        "300", "10",
+        "--requirepass",
+        "34b2d02037a461b42754abfedbf4b7a0"
+    ]
+    volumes:
+      - ./.redis_data/:/etc/redis/database
+    restart: always
+    ports:
+      - "16379:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli", "ping" ]
+      timeout: 3s
+      interval: 1s
+      retries: 30
+
+  wallet:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    restart: always
+    environment:
+      - BIND_ADDR=:8080
+      - GRACEFUL_SHUTDOWN_TIMEOUT_SEC=120
+      - DB_TYPE=psql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE_NAME=test_db
+      - DB_USER=root
+      - DB_PASSWORD=088fc01375fe2b689db8a872912392c6
+      - IDEMPOTENCY_REDIS_ADDR=redis:6379
+      - IDEMPOTENCY_REDIS_PASSWORD=34b2d02037a461b42754abfedbf4b7a0
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+          condition: service_healthy
+      redis:
+          condition: service_healthy
