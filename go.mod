@@ -11,6 +11,7 @@ require (
 	github.com/jackc/pgconn v1.9.0
 	github.com/jackc/pgx v3.6.2+incompatible // indirect
 	github.com/jackc/pgx/v4 v4.12.0
+	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/ory/dockertest/v3 v3.7.0
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.11.0
