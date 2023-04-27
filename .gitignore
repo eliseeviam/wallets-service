@@ -17,3 +17,5 @@ vendor/
 .idea
 .postgres_data/
 .redis_data/
+
+venv
